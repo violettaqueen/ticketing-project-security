@@ -1,23 +1,23 @@
 package com.cydeo.config;
 
+import com.cydeo.service.SecurityService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
 public class SecurityConfig {
+
+    private final SecurityService securityService;
+    private final AuthSuccessHandler authSuccessHandler;
+
+    public SecurityConfig(SecurityService securityService, AuthSuccessHandler authSuccessHandler) {
+        this.securityService = securityService;
+        this.authSuccessHandler = authSuccessHandler;
+    }
 
 //    @Bean
 //    public UserDetailsService userDetailService(PasswordEncoder encoder) {
@@ -39,10 +39,10 @@ public class SecurityConfig {
 
         return http
                 .authorizeRequests()
-                .antMatchers("/user/**").hasRole("ADMIN")  //anything under user controller Admin has to be able to access
-                .antMatchers("/project/**").hasRole("MANAGER")
-                .antMatchers("/task/employee/**").hasRole("EMPLOYEE")
-                .antMatchers("/task/**").hasRole("MANAGER")
+                .antMatchers("/user/**").hasAuthority("Admin")  //anything under user controller Admin has to be able to access, Admin need to match with DB
+                .antMatchers("/project/**").hasRole("Manager")
+                .antMatchers("/task/employee/**").hasRole("Employee")
+                .antMatchers("/task/**").hasRole("Manager")
                // .antMatchers("/task/**").hasAnyRole("EMPLOYEE", "ADMIN")
                // .antMatchers("/task/**").hasAuthority("ROLE_EMPLOYEE")
                 .antMatchers(
@@ -57,10 +57,21 @@ public class SecurityConfig {
                // .httpBasic()//pop box that comes with spring, but I want my own
                 .formLogin()
                     .loginPage("/login")
-                    .defaultSuccessUrl("/welcome")
+                    //.defaultSuccessUrl("/welcome")  //when we login. land to welcome page
+                .successHandler(authSuccessHandler)
                 .failureUrl("/login?error = true")
                     .permitAll()
-                .and().build();
+                .and()
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) //where logout button
+                .logoutSuccessUrl("/login")
+                .and()
+                .rememberMe()
+                    .tokenValiditySeconds(120)  //how long activate yourself
+                    .key("cydeo") //keeping info based on
+                    .userDetailsService(securityService) //remember who? remember me, to capture the logged in user
+                .and()
+                .build();
     }
 
 
