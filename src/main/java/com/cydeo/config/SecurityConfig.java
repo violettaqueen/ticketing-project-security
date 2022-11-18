@@ -40,9 +40,9 @@ public class SecurityConfig {
         return http
                 .authorizeRequests()
                 .antMatchers("/user/**").hasAuthority("Admin")  //anything under user controller Admin has to be able to access, Admin need to match with DB
-                .antMatchers("/project/**").hasRole("Manager")
-                .antMatchers("/task/employee/**").hasRole("Employee")
-                .antMatchers("/task/**").hasRole("Manager")
+                .antMatchers("/project/**").hasAuthority("Manager")
+                .antMatchers("/task/employee/**").hasAuthority("Employee")
+                .antMatchers("/task/**").hasAuthority("Manager")
                // .antMatchers("/task/**").hasAnyRole("EMPLOYEE", "ADMIN")
                // .antMatchers("/task/**").hasAuthority("ROLE_EMPLOYEE")
                 .antMatchers(
@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login")
                 .and()
                 .rememberMe()
-                    .tokenValiditySeconds(120)  //how long activate yourself
+                    .tokenValiditySeconds(1000)  //how long activate yourself
                     .key("cydeo") //keeping info based on
                     .userDetailsService(securityService) //remember who? remember me, to capture the logged in user
                 .and()
