@@ -13,18 +13,19 @@ public class SecurityServiceImpl implements SecurityService {
 
     private final UserRepository userRepository;
 
-    public SecurityServiceImpl(UserRepository userRepository) {
+    public SecurityServiceImpl(UserRepository userRepository) {  // we need a constructor because we will return a Use object
         this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //get user from DB and convert to user spring understands, we need UserPrinciple(mapper)
+        //get user, that we want to auth from DB and convert to user spring user,
+        //we need UserPrinciple(mapper)
 
         User user = userRepository.findByUserNameAndIsDeleted(username, false);
 
         if(user==null){
-             throw new UsernameNotFoundException(username);
+             throw new UsernameNotFoundException(username); //Spring requires this check
          }
 
         return new UserPrincipal(user);

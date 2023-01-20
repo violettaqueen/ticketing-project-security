@@ -11,17 +11,17 @@ import javax.persistence.PreUpdate;
 import java.time.LocalDateTime;
 
 @Component
-public class BaseEntityListener extends AuditingEntityListener {
+public class BaseEntityListener extends AuditingEntityListener {  //whatever happens in app, this mechanism is listening BaseEntity
 
     @PrePersist
-    private void onPrePersist(BaseEntity baseEntity){
+    private void onPrePersist(BaseEntity baseEntity){  //listen to BaseEntity
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         baseEntity.setInsertDateTime(LocalDateTime.now());
         baseEntity.setLastUpdateDateTime(LocalDateTime.now());
 
-        if(authentication != null && !authentication.getName().equals("anonymousUser")){
+        if(authentication != null && !authentication.getName().equals("anonymousUser")){ //if this is a valid user
             Object principal = authentication.getPrincipal();
             baseEntity.setInsertUserId( ((UserPrincipal) principal).getId());
             baseEntity.setLastUpdateUserId( ((UserPrincipal) principal).getId());

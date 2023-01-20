@@ -99,13 +99,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<ProjectDTO> listAllProjectDetails() {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();  //who is loggedIn
 
-        UserDTO currentUserDTO = userService.findByUserName(username);
+        UserDTO currentUserDTO = userService.findByUserName(username); //find him
 
-        User user = userMapper.convertToEntity(currentUserDTO);
+        User user = userMapper.convertToEntity(currentUserDTO); // map to db user
 
-        List<Project> list = projectRepository.findAllByAssignedManager(user);
+        List<Project> list = projectRepository.findAllByAssignedManager(user); //
 
 
         return list.stream().map(project -> {

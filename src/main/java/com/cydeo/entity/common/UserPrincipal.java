@@ -13,14 +13,14 @@ public class UserPrincipal implements UserDetails {
 
     private User user;  //entity
 
-    public UserPrincipal(User user) {
+    public UserPrincipal(User user) {  //user parameter for validation
         this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        List<GrantedAuthority> authorityList = new ArrayList<>();
+        List<GrantedAuthority> authorityList = new ArrayList<>();       //creating the authority list from DB -> mapper
         GrantedAuthority authority = new SimpleGrantedAuthority(this.user.getRole().getDescription());
         authorityList.add(authority);
         return authorityList;
@@ -29,7 +29,7 @@ public class UserPrincipal implements UserDetails {
     @Override
     public String getPassword() {
         return this.user.getPassWord();
-    }
+    } //to access password field of my user object
 
     @Override
     public String getUsername() {
@@ -55,7 +55,7 @@ public class UserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return this.user.isEnabled();
     }
-    public Long getId(){
+    public Long getId(){   // get ID, the ID from DB
         return this.user.getId();
     }
 }

@@ -14,10 +14,12 @@ import java.util.Set;
 public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-        //landing will be based on my role, it will capture the user role in this method
+        //landing will be based on my role, it will capture the user role in this method, when authorization is done
+        //set if user has many roles, to make sure no dup roles
 
         if(roles.contains("Admin")){
             response.sendRedirect("/user/create");

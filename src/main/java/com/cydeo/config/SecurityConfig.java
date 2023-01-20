@@ -33,34 +33,34 @@ public class SecurityConfig {
 //    }
 
     // spring providing us a class security filter chain
-    //when we run security, we need to authorize each authorize, but I need to exclude some pages
+    //when we run security, we need to authorize each, but I need to exclude some pages
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {//what, how and who we authorize
 
         return http
-                .authorizeRequests()
-                .antMatchers("/user/**").hasAuthority("Admin")  //anything under user controller Admin has to be able to access, Admin need to match with DB
-                .antMatchers("/project/**").hasAuthority("Manager")
+                .authorizeRequests()                                            //checking for request
+                .antMatchers("/user/**").hasAuthority("Admin")      //anything under user controller Admin has to be able to access, Admin need to match with DB
+                .antMatchers("/project/**").hasAuthority("Manager") //what can be accessed and by users with the certain role, all functionalities described in User Controller
                 .antMatchers("/task/employee/**").hasAuthority("Employee")
                 .antMatchers("/task/**").hasAuthority("Manager")
-               // .antMatchers("/task/**").hasAnyRole("EMPLOYEE", "ADMIN")
+               // .antMatchers("/task/**").hasAnyRole("EMPLOYEE", "ADMIN")     //define more then one role
                // .antMatchers("/task/**").hasAuthority("ROLE_EMPLOYEE")
                 .antMatchers(
-                "/",
+                "/",                                               //what can be accessed and b
                         "/login",
                         "/fragments/**",
                         "/assets/**",
                         "/images/**"
-                 ).permitAll()
-                .anyRequest().authenticated()
+                 ).permitAll()                                                //authorize these directories for all
+                .anyRequest().authenticated()                                 //any request should be authenticated, when form is filled
                 .and()
-               // .httpBasic()//pop box that comes with spring, but I want my own
-                .formLogin()
+               // .httpBasic()                                                //pop box that comes with spring, but I want my own
+                .formLogin()                                                  // to show login page instead the pne Spring is provided
                     .loginPage("/login")
-                    //.defaultSuccessUrl("/welcome")  //when we login. land to welcome page
-                .successHandler(authSuccessHandler)
-                .failureUrl("/login?error = true")
-                    .permitAll()
+                    //.defaultSuccessUrl("/welcome")                          //when we login, land to welcome page
+                .successHandler(authSuccessHandler)                           //
+                .failureUrl("/login?error = true")         //navigate back to login page
+                    .permitAll()                                              //accessible to use
                 .and()
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) //where logout button
