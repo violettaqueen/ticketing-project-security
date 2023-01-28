@@ -6,16 +6,16 @@ jobs:
       - image: circleci/openjdk:11-jdk
     working_directory: /tmp/workspace
     steps:
-      - checkout
-      - run: mkdir -p /tmp/workspace
+      - checkout  #go to Github, find my code
+      - run: mkdir -p /tmp/workspace   #parent folder
       # Download and cache dependencies
-      - restore_cache:
+      - restore_cache:  #
           keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: mvn clean install -DskipTests
+      - run: mvn clean install -DskipTests  #it will package my app, compile code
       - save_cache:
           paths:
             - ~/.m2
@@ -31,7 +31,7 @@ jobs:
       - run: ls -a /tmp/workspace
       - run:
           name: Create Docker image and push to ECR
-          command: aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 340062320022.dkr.ecr.us-west-2.amazonaws.com && docker build -t ticketingapp /tmp/workspace && ddocker tag ticketingapp:latest 340062320022.dkr.ecr.us-west-2.amazonaws.com/ticketingapp:latest && docker push 340062320022.dkr.ecr.us-west-2.amazonaws.com/ticketingapp:latest
+          command: aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 340062320022.dkr.ecr.us-west-2.amazonaws.com && docker build -t ticketingapp /tmp/workspace && docker tag ticketingapp:latest 340062320022.dkr.ecr.us-west-2.amazonaws.com/ticketingapp:latest && docker push 340062320022.dkr.ecr.us-west-2.amazonaws.com/ticketingapp:latest
   deploy-job:
     docker:
       #specify the version you desire here
@@ -50,7 +50,7 @@ workflows:
       - build
       - docker-image-and-publish:
           requires:
-            - build
+            - build  #first should build
       - deploy-job:
           requires:
             - docker-image-and-publish

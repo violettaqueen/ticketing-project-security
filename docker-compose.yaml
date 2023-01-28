@@ -1,27 +1,27 @@
 version: "3.7"
-services:
-  mypostgres:
-    image: postgres
-    container_name: mypostgres
-    environment:
+services:                                              #application
+  mypostgres:                                          #give any name
+    image: postgres                                    #official image
+    container_name: mypostgres                         #provide container name
+    environment:                                       #configs from app.properties, got env variables from docker hub
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "5037"
       POSTGRES_DB: "ticketing-app"
-    ports:
+    ports:                                             #define port so it will be reached from outside
       - "5435:5432"
-    restart: always
-    volumes:
-      - initdb:/var/lib/postgresql/data
+    restart: always                                    #run all the time
+    volumes:                                           #define volume to persist data
+      - initdb:/var/lib/postgresql/data                #copy this path from docker hub postgres image
     networks:
       - webnet
-  ticketing-app:
-    build: .
+  ticketing-app:                                       #monolitic
+    build: .                                           #it will build and create an image in same folder
     container_name: ticketingapp
     ports:
       - "8080:8080"
     networks:
       - webnet
-    depends_on:
+    depends_on:                                       # ticketing app will run second after postgres run
       - mypostgres
 networks:
   webnet:
