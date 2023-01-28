@@ -50,7 +50,7 @@ workflows:
       - build
       - docker-image-and-publish:
           requires:
-            - build  #first should build
+            - build
       - deploy-job:
           requires:
             - docker-image-and-publish
